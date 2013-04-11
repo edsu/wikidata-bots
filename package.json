@@ -1,0 +1,16 @@
+{
+  "engines": {
+    "node": "0.8.x",
+    "npm": "1.1.x"
+  },
+  "name": "wikibots",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "2.5.x",
+    "redis": "0.8.x",
+    "redis-url": "0.0.1",
+    "wikichanges": "0.0.5",
+    "coffee-script": "latest"
+  }
+}
