@@ -1,17 +1,25 @@
 # assumes jQuery and async are available
 
 stats = {}
+period = null
 
 jQuery ->
   $ = jQuery
-  $.getJSON("bots.json", getStats)
+  draw()
 
-getStats = (bots) ->
-  botNames = (name for name of bots)
-  stats = async.map(botNames, getBotStats, drawChart)
+$(window).bind "hashchange", ->
+  draw()
+
+draw = ->
+  period = $.bbq.getState("period") || "hour"
+  $.getJSON "bots.json", (bots) ->
+    botNames = (name for name of bots)
+    async.map(botNames, getBotStats, drawChart)
+    $(".nav li").removeClass("active")
+    $("#period-#{ period }").addClass("active")
 
 getBotStats = (name, callback) ->
-  url = "/stats/#{name}_hour.json"
+  url = "/stats/#{name}_" + period + ".json"
   $.getJSON url, (stats) ->
     stats.shift() # pop off column headers
     stats.unshift(name) # push on the name for this stat
@@ -21,7 +29,6 @@ drawChart = (err, stats) ->
   ctx = $('#chart').get(0).getContext("2d")
   chart = new Chart(ctx)
   data = makeData(stats)
-  console.log data
   opts =
     pointDot: false,
     datasetFill: false,
@@ -29,6 +36,7 @@ drawChart = (err, stats) ->
     datasetStrokeWidth: 2
   chart.Line(data, opts)
   legend = $("#legend")
+  legend.empty()
   for dataset in data.datasets
     li = $('<li><a style="color: ' + dataset.strokeColor + '" href="http://wikidata.org/wiki/User:' + dataset.name + '">' + dataset.name + '</a></li>')
     li.css(color: dataset.strokeColor)
@@ -70,14 +78,6 @@ pad = (n) ->
 
 formatDate = (d) ->
   return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()) + ' '
-
-rgba = ->
-  r = parseInt(Math.random() * 255 + 1)
-  g = parseInt(Math.random() * 255 + 1)
-  b = parseInt(Math.random() * 255 + 1)
-  x = "rgba(#{r}, #{g}, #{b}, 0.8)"
-  console.log x
-  return x
 
 colors = [
     "blue",
