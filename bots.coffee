@@ -30,7 +30,7 @@ drawChart = (err, stats) ->
   chart.Line(data, opts)
   legend = $("#legend")
   for dataset in data.datasets
-    li = $("<li>" + dataset.name + " " + dataset.strokeColor + "</li>")
+    li = $('<li><a style="color: ' + dataset.strokeColor + '" href="http://wikidata.org/wiki/User:' + dataset.name + '">' + dataset.name + '</a></li>')
     li.css(color: dataset.strokeColor)
     legend.append(li)
 
@@ -104,15 +104,10 @@ colors = [
     "darkseagreen",
     "darkturquoise",
     "darkviolet",
-    "deeppink",
-    "deepskyblue",
-    "dimgray",
     "dodgerblue",
-    "firebrick",
     "forestgreen",
     "fuchsia",
     "gainsboro",
-    "ghostwhite",
     "gold",
     "goldenrod",
     "gray",
@@ -128,18 +123,6 @@ colors = [
     "lavenderblush",
     "lawngreen",
     "lemonchiffon",
-    "lightblue",
-    "lightcoral",
-    "lightcyan",
-    "lightgoldenrodyellow",
-    "lightgreen",
-    "lightpink",
-    "lightsalmon",
-    "lightseagreen",
-    "lightskyblue",
-    "lightslategray",
-    "lightsteelblue",
-    "lightyellow",
     "lime",
     "limegreen",
     "linen",
