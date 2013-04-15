@@ -1,10 +1,32 @@
 <html>
   <head>
     <script src="http://www.stathat.com/javascripts/embed.js"></script>
-    <script src="http:////ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="lib/async.js"></script>
+    <script src="lib/chart.js"></script>
     <script src="bots.js"></script>
+    <style>
+      #content {
+        width: 1200;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      #chart {
+        float: left;
+      }
+      #legend {
+      }
+      #legend li {
+        font-size: smaller;
+        font-weight: bold;
+      }
+    </style>
   </head>
   <body>
     <h1>Wikidata Bots</h1>
+    <div id="content">
+      <canvas id="chart" width="900" height="500"></canvas>
+      <ul id="legend"></ul>
+  </div>
   </body>
 </html>
