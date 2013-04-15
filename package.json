@@ -3,14 +3,13 @@
     "node": "0.8.x",
     "npm": "1.1.x"
   },
-  "name": "wikibots",
+  "name": "wikidata-bots",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "express": "2.5.x",
-    "redis": "0.8.x",
-    "redis-url": "0.0.1",
+    "stathat": "latest",
     "wikichanges": "0.0.5",
-    "coffee-script": "latest"
+    "coffee-script": "latest",
+    "request": "latest"
   }
 }

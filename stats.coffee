@@ -52,5 +52,6 @@ main = ->
     if change.robot and change.channel == '#wikidata.wikipedia'
       tally change
   saveBots()
+  saveStats() 
 
 main()

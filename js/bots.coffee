@@ -19,7 +19,7 @@ draw = ->
     $("#period-#{ period }").addClass("active")
 
 getBotStats = (name, callback) ->
-  url = "/stats/#{name}_" + period + ".json"
+  url = "stats/#{name}_" + period + ".json"
   $.getJSON url, (stats) ->
     stats.shift() # pop off column headers
     stats.unshift(name) # push on the name for this stat
