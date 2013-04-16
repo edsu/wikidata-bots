@@ -52,7 +52,7 @@ makeData = (stats, selected) ->
   for name, botStats of stats
     color = colors[datasets.length]
     if selected and selected != name
-      color = color.replace('0.7', '0.1')
+      color = color.replace('0.7', '0.05')
 
     data = []
     hasData = false
