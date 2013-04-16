@@ -12,22 +12,13 @@ $(window).bind "hashchange", ->
 
 draw = ->
   period = $.bbq.getState("period") || "hour"
-  $.getJSON "bots.json", (bots) ->
-    botNames = (name for name of bots)
-    botNames = botNames.filter (name) ->
-      bots[name] != null
-    async.map(botNames, getBotStats, drawChart)
+  url = "stats/#{period}.json"
+  $.getJSON url, (stats) ->
+    drawChart(stats)
     $(".nav li").removeClass("active")
     $("#period-#{ period }").addClass("active")
 
-getBotStats = (name, callback) ->
-  url = "stats/#{name}_" + period + ".json"
-  $.getJSON url, (stats, status, jqXHR) ->
-    stats.shift() # pop off column headers
-    stats.unshift(name) # push on the name for this stat
-    callback(null, stats)
-
-drawChart = (err, stats, selected) ->
+drawChart = (stats, selected) ->
   ctx = $('#chart').get(0).getContext("2d")
   chart = new Chart(ctx)
   data = makeData(stats, selected)
@@ -47,29 +38,25 @@ drawChart = (err, stats, selected) ->
 
   $("#legend a").hover(
     (ev) ->
-      console.log $(ev.target).css('color')
       newSelected = $(ev.target).data('dataset')
       if newSelected != selected
-        drawChart(err, stats, newSelected)
+        drawChart(stats, newSelected)
     (ev) ->
-      console.log ev.type
       $(ev.target).css('font-weight', 'normal')
-      drawChart(err, stats)
+      drawChart(stats)
   )
 
 makeData = (stats, selected) ->
+  labels = makeLabels(stats)
   datasets = []
-  console.log selected
-  for s, i in stats
-    name = s[0]
-    labels = makeLabels(stats)
-    color = colors[i]
+  for name, botStats of stats
+    color = colors[datasets.length]
     if selected and selected != name
       color = color.replace('0.7', '0.1')
 
     data = []
     hasData = false
-    for row in s[1..-1]
+    for row in botStats
       if row[1] > 0
         hasData = true
       data.push(row[1])
@@ -80,14 +67,15 @@ makeData = (stats, selected) ->
 makeLabels = (stats) ->
   count = 0
   labels = []
-  for row in stats[1]
-    if count % 7 == 0
-      d = new Date(row[0] * 1000)
-      labels.push(formatDate(d))
-    else
-      labels.push("")
-    count += 1
-  return labels
+  for name, data of stats
+    for row in data
+      if count % 7 == 0
+        d = new Date(row[0] * 1000)
+        labels.push(formatDate(d))
+      else
+        labels.push("")
+      count += 1
+    return labels
 
 pad = (n) ->
   if n < 10
@@ -137,3 +125,4 @@ colors = [
   "rgba(26, 152, 80, 0.7)",
   "rgba(0, 104, 55, 0.7)"
 ]
+
