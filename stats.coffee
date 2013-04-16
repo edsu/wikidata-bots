@@ -12,6 +12,13 @@ bots = JSON.parse(fs.readFileSync('bots.json'))
 
 saveBots = ->
   console.log "saving bots"
+
+  # make sure not to lose any stathat bot ids added to the bots.json 
+  oldBots = JSON.parse(fs.readFileSync('bots.json'))
+  for name, id of oldBots
+    bots[name] = oldBots[name]
+
+  # now save them
   fs.writeFileSync('bots.json', JSON.stringify(bots, null, 2))
   setTimeout(saveBots, refreshRate)
 
@@ -52,6 +59,6 @@ main = ->
     if change.robot and change.channel == '#wikidata.wikipedia'
       tally change
   saveBots()
-  saveStats() 
+  saveStats()
 
 main()

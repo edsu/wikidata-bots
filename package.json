@@ -10,7 +10,7 @@
     "stathat": "latest",
     "wikichanges": "0.0.5",
     "coffee-script": "latest",
-    "request": "latest"
+    "request": "latest",
     "connect": "latest"
   }
 }

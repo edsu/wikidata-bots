@@ -14,46 +14,65 @@ draw = ->
   period = $.bbq.getState("period") || "hour"
   $.getJSON "bots.json", (bots) ->
     botNames = (name for name of bots)
+    botNames = botNames.filter (name) ->
+      bots[name] != null
     async.map(botNames, getBotStats, drawChart)
     $(".nav li").removeClass("active")
     $("#period-#{ period }").addClass("active")
 
 getBotStats = (name, callback) ->
   url = "stats/#{name}_" + period + ".json"
-  $.getJSON url, (stats) ->
+  $.getJSON url, (stats, status, jqXHR) ->
     stats.shift() # pop off column headers
     stats.unshift(name) # push on the name for this stat
     callback(null, stats)
 
-drawChart = (err, stats) ->
+drawChart = (err, stats, selected) ->
   ctx = $('#chart').get(0).getContext("2d")
   chart = new Chart(ctx)
-  data = makeData(stats)
+  data = makeData(stats, selected)
   opts =
     pointDot: false,
     datasetFill: false,
     scaleShowLabels: true,
-    datasetStrokeWidth: 2
+    datasetStrokeWidth: 2,
+    animation: false
   chart.Line(data, opts)
+
   legend = $("#legend")
   legend.empty()
   for dataset in data.datasets
-    li = $('<li><a style="color: ' + dataset.strokeColor + '" href="http://wikidata.org/wiki/User:' + dataset.name + '">' + dataset.name + '</a></li>')
-    li.css(color: dataset.strokeColor)
+    li = $('<li><a data-dataset="' + dataset.name + '" style="color: ' + dataset.strokeColor + '" href="http://wikidata.org/wiki/User:' + dataset.name + '">' + dataset.name + '</a></li>')
     legend.append(li)
 
-makeData = (stats) ->
+  $("#legend a").hover(
+    (ev) ->
+      console.log $(ev.target).css('color')
+      newSelected = $(ev.target).data('dataset')
+      if newSelected != selected
+        drawChart(err, stats, newSelected)
+    (ev) ->
+      console.log ev.type
+      $(ev.target).css('font-weight', 'normal')
+      drawChart(err, stats)
+  )
+
+makeData = (stats, selected) ->
   datasets = []
+  console.log selected
   for s, i in stats
-    name = s.shift()
+    name = s[0]
     labels = makeLabels(stats)
+    color = colors[i]
+    if selected and selected != name
+      color = color.replace('0.7', '0.1')
+
     data = []
     hasData = false
-    for row in s
+    for row in s[1..-1]
       if row[1] > 0
         hasData = true
       data.push(row[1])
-    color = colors[i]
     if hasData
       datasets.push(name: name, strokeColor: color, data: data)
   return labels: labels, datasets: datasets
@@ -80,110 +99,41 @@ formatDate = (d) ->
   return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()) + ' '
 
 colors = [
-    "blue",
-    "blueviolet",
-    "brown",
-    "cadetblue",
-    "chartreuse",
-    "chocolate",
-    "cornflowerblue",
-    "crimson",
-    "cyan",
-    "darkblue",
-    "darkcyan",
-    "darkgoldenrod",
-    "darkgray",
-    "darkgreen",
-    "darkkhaki",
-    "darkmagenta",
-    "darkolivegreen",
-    "darkorange",
-    "darkorchid",
-    "darkred",
-    "darksalmon",
-    "darkseagreen",
-    "darkturquoise",
-    "darkviolet",
-    "dodgerblue",
-    "forestgreen",
-    "fuchsia",
-    "gainsboro",
-    "gold",
-    "goldenrod",
-    "gray",
-    "green",
-    "greenyellow",
-    "honeydew",
-    "hotpink",
-    "indianred",
-    "indigo",
-    "ivory",
-    "khaki",
-    "lavender",
-    "lavenderblush",
-    "lawngreen",
-    "lemonchiffon",
-    "lime",
-    "limegreen",
-    "linen",
-    "magenta",
-    "maroon",
-    "mediumaquamarine",
-    "mediumblue",
-    "mediumorchid",
-    "mediumpurple",
-    "mediumseagreen",
-    "mediumslateblue",
-    "mediumspringgreen",
-    "mediumturquoise",
-    "mediumvioletred",
-    "midnightblue",
-    "mintcream",
-    "mistyrose",
-    "moccasin",
-    "navajowhite",
-    "navy",
-    "oldlace",
-    "olive",
-    "olivedrab",
-    "orange",
-    "orangered",
-    "orchid",
-    "palegoldenrod",
-    "palegreen",
-    "paleturquoise",
-    "palevioletred",
-    "papayawhip",
-    "peachpuff",
-    "peru",
-    "pink",
-    "plum",
-    "powderblue",
-    "purple",
-    "red",
-    "rosybrown",
-    "royalblue",
-    "saddlebrown",
-    "salmon",
-    "sandybrown",
-    "seagreen",
-    "seashell",
-    "sienna",
-    "silver",
-    "skyblue",
-    "slateblue",
-    "slategray",
-    "snow",
-    "springgreen",
-    "steelblue",
-    "tan",
-    "teal",
-    "thistle",
-    "tomato",
-    "turquoise",
-    "violet",
-    "wheat",
-    "whitesmoke",
-    "yellow",
-    "yellowgreen"
+  "rgba(103, 0, 31, 0.7)",
+  "rgba(178, 24, 43, 0.7)",
+  "rgba(214, 96, 77, 0.7)",
+  "rgba(244, 165, 130, 0.7)",
+  "rgba(209, 229, 240, 0.7)",
+  "rgba(146, 197, 222, 0.7)",
+  "rgba(67, 147, 195, 0.7)",
+  "rgba(33, 102, 172, 0.7)",
+  "rgba(5, 48, 97, 0.7)",
+  "rgba(103, 0, 31, 0.7)",
+  "rgba(178, 24, 43, 0.7)",
+  "rgba(214, 96, 77, 0.7)",
+  "rgba(244, 165, 130, 0.7)",
+  "rgba(186, 186, 186, 0.7)",
+  "rgba(135, 135, 135, 0.7)",
+  "rgba(77, 77, 77, 0.7)",
+  "rgba(26, 26, 26, 0.7)",
+  "rgba(165, 0, 38, 0.7)",
+  "rgba(215, 48, 39, 0.7)",
+  "rgba(244, 109, 67, 0.7)",
+  "rgba(253, 174, 97, 0.7)",
+  "rgba(254, 224, 144, 0.7)",
+  "rgba(171, 217, 233, 0.7)",
+  "rgba(116, 173, 209, 0.7)",
+  "rgba(69, 117, 180, 0.7)",
+  "rgba(49, 54, 149, 0.7)",
+  "rgba(165, 0, 38, 0.7)",
+  "rgba(215, 48, 39, 0.7)",
+  "rgba(244, 109, 67, 0.7)",
+  "rgba(253, 174, 97, 0.7)",
+  "rgba(254, 224, 139, 0.7)",
+  "rgba(255, 255, 191, 0.7)",
+  "rgba(217, 239, 139, 0.7)",
+  "rgba(166, 217, 106, 0.7)",
+  "rgba(102, 189, 99, 0.7)",
+  "rgba(26, 152, 80, 0.7)",
+  "rgba(0, 104, 55, 0.7)"
 ]

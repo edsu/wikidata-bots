@@ -9,16 +9,19 @@
     <script src="js/chart.js"></script>
     <script src="js/bots.js"></script>
     <script src="js/bootstrap.js"></script>
+    <script src="js/colorbrewer.js"></script>
     <script src="js/jquery.ba-bbq.js"></script>
     <style>
       #legend {
-        list-style-type: square;
+        list-style-type: none;
       }
       #legend li {
-        font-weight: bold;
+        white-space: nowrap;
+        padding: 2px;
+        margin: 0px;
       }
     </style>
-  </head
+  </head>
   <body>
 
     <div class="container">
@@ -39,11 +42,11 @@
       </div>
 
       <div class="row-fluid">
-        <div class="span9">
-          <canvas id="chart" width=900 height=400></canvas>
+        <div class="span8">
+          <canvas id="chart" width=800 height=600></canvas>
         </div>
-        <div class="span2">
-          <ul class="span2" id="legend"></ul>
+        <div class="span1">
+          <ul id="legend"></ul>
         </div>
       </div>
     </div>
