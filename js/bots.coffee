@@ -47,7 +47,6 @@ drawChart = (stats, selected) ->
   )
 
 makeData = (stats, selected) ->
-  labels = makeLabels(stats)
   datasets = []
   for name, botStats of stats
     color = colors[datasets.length]
@@ -56,12 +55,24 @@ makeData = (stats, selected) ->
 
     data = []
     hasData = false
+    total = 0
     for row in botStats
       if row[1] > 0
         hasData = true
       data.push(row[1])
+      total += row[1]
     if hasData
-      datasets.push(name: name, strokeColor: color, data: data)
+      datasets.push(name: name, strokeColor: color, data: data, total: total)
+
+  datasets.sort (a, b) ->
+    if a.total < b.total
+      return 1
+    else if a.total > b.total
+      return -1
+    else
+      return 0
+
+  labels = makeLabels(stats)
   return labels: labels, datasets: datasets
 
 makeLabels = (stats) ->
@@ -120,6 +131,10 @@ colors = [
   "rgba(254, 224, 139, 0.7)",
   "rgba(255, 255, 191, 0.7)",
   "rgba(217, 239, 139, 0.7)",
+  "rgba(166, 217, 106, 0.7)",
+  "rgba(102, 189, 99, 0.7)",
+  "rgba(26, 152, 80, 0.7)",
+  "rgba(0, 104, 55, 0.7)",
   "rgba(166, 217, 106, 0.7)",
   "rgba(102, 189, 99, 0.7)",
   "rgba(26, 152, 80, 0.7)",
