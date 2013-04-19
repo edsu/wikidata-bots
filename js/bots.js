@@ -119,7 +119,7 @@
       data = stats[name];
       for (_i = 0, _len = data.length; _i < _len; _i++) {
         row = data[_i];
-        if (count % 7 === 0) {
+        if (count % 10 === 0) {
           d = new Date(row[0] * 1000);
           labels.push(formatDate(d));
         } else {
@@ -140,7 +140,13 @@
   };
 
   formatDate = function(d) {
-    return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()) + ' ';
+    var t;
+
+    t = d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate());
+    if (period === "hour") {
+      t += ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+    return t;
   };
 
   colors = ["rgba(103, 0, 31, 0.7)", "rgba(178, 24, 43, 0.7)", "rgba(214, 96, 77, 0.7)", "rgba(244, 165, 130, 0.7)", "rgba(209, 229, 240, 0.7)", "rgba(146, 197, 222, 0.7)", "rgba(67, 147, 195, 0.7)", "rgba(33, 102, 172, 0.7)", "rgba(5, 48, 97, 0.7)", "rgba(103, 0, 31, 0.7)", "rgba(178, 24, 43, 0.7)", "rgba(214, 96, 77, 0.7)", "rgba(244, 165, 130, 0.7)", "rgba(186, 186, 186, 0.7)", "rgba(135, 135, 135, 0.7)", "rgba(77, 77, 77, 0.7)", "rgba(26, 26, 26, 0.7)", "rgba(165, 0, 38, 0.7)", "rgba(215, 48, 39, 0.7)", "rgba(244, 109, 67, 0.7)", "rgba(253, 174, 97, 0.7)", "rgba(254, 224, 144, 0.7)", "rgba(171, 217, 233, 0.7)", "rgba(116, 173, 209, 0.7)", "rgba(69, 117, 180, 0.7)", "rgba(49, 54, 149, 0.7)", "rgba(165, 0, 38, 0.7)", "rgba(215, 48, 39, 0.7)", "rgba(244, 109, 67, 0.7)", "rgba(253, 174, 97, 0.7)", "rgba(254, 224, 139, 0.7)", "rgba(255, 255, 191, 0.7)", "rgba(217, 239, 139, 0.7)", "rgba(166, 217, 106, 0.7)", "rgba(102, 189, 99, 0.7)", "rgba(26, 152, 80, 0.7)", "rgba(0, 104, 55, 0.7)", "rgba(166, 217, 106, 0.7)", "rgba(102, 189, 99, 0.7)", "rgba(26, 152, 80, 0.7)", "rgba(0, 104, 55, 0.7)"];

@@ -80,7 +80,7 @@ makeLabels = (stats) ->
   labels = []
   for name, data of stats
     for row in data
-      if count % 7 == 0
+      if count % 10 == 0
         d = new Date(row[0] * 1000)
         labels.push(formatDate(d))
       else
@@ -95,8 +95,11 @@ pad = (n) ->
     return n
 
 formatDate = (d) ->
-  return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()) + ' '
-
+  t = d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate())
+  if period == "hour"
+    t += ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes())
+  return t
+    
 colors = [
   "rgba(103, 0, 31, 0.7)",
   "rgba(178, 24, 43, 0.7)",
