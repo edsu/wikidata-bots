@@ -32,15 +32,18 @@ saveAllStats = ->
   setTimeout(saveAllStats, refreshRate)
 
 saveStats = (period) ->
-  names = (name for name, id of bots)
-  getStats = makeStatsFetcher(name, period)
-  async.mapSeries names, getStats, (e, result) ->
-    stats = {}
-    for r in result
-      name = r[0]
-      data = r[1..-1]
-      stats[name] = data
-    fs.writeFile('stats/' + period + '.json', JSON.stringify(stats))
+  try
+    names = (name for name, id of bots)
+    getStats = makeStatsFetcher(name, period)
+    async.mapSeries names, getStats, (e, result) ->
+      stats = {}
+      for r in result
+        name = r[0]
+        data = r[1..-1]
+        stats[name] = data
+      fs.writeFile('stats/' + period + '.json', JSON.stringify(stats))
+  catch error
+    console.log "error when fetching stats: #{error}" 
 
 makeStatsFetcher = (name, period) ->
   return (name, callback) ->
