@@ -1,5 +1,3 @@
-#!/usr/bin/env coffee
-
 STATHAT_TOKEN = "ehs@pobox.com"
 
 fs = require('fs')
